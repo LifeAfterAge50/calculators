@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Retirement Income Gap Calculator - LifeAfterAge50</title>
+</head>
+<body style="background:#f5f7f7;margin:0;padding:1rem;">
+<div style="font-family:sans-serif;max-width:650px;margin:auto;padding:1rem;border-radius:12px;background:#e5f3f1;border:1px solid #ccc;">
+  <h2 style="color:#1c8c7d;margin-top:0;">Retirement Income Gap Calculator</h2>
+  <p>Estimate how much income you’ll need to cover in retirement.</p>
+
+  <label>Annual spending need:<br>
+    <input type="text" id="need" placeholder="e.g., 60,000" style="width:100%;padding:0.5rem;margin:0.5rem 0;">
+  </label>
+
+  <label>Guaranteed income (SS, pension, annuities):<br>
+    <input type="text" id="guaranteed" placeholder="e.g., 40,000" style="width:100%;padding:0.5rem;margin:0.5rem 0;">
+  </label>
+
+  <label>Safe withdrawal rate (%):<br>
+    <input type="number" id="swr" placeholder="e.g., 4" style="width:100%;padding:0.5rem;margin:0.5rem 0;">
+  </label>
+
+  <button onclick="calcGap()" style="background:#1c8c7d;color:#fff;padding:0.6rem 1.2rem;border:none;border-radius:6px;cursor:pointer;">Calculate</button>
+
+  <div id="result" style="margin-top:1rem;display:none;">
+    <h3 style="color:#1c8c7d;">Results</h3>
+    <p><strong>Annual income gap:</strong> <span id="gap"></span></p>
+    <p><strong>Portfolio needed to fill gap:</strong> <span id="portfolio"></span></p>
+    <p style="font-size:0.8rem;color:#777;margin-top:0.75rem;">Educational only. Not financial advice.</p>
+  </div>
+</div>
+
+<script>
+function fmt(n){return n.toLocaleString("en-US",{style:"currency",currency:"USD"});}
+function clean(v){return parseFloat(v.replace(/,/g,""));}
+function addCommas(e){e.value=e.value.replace(/\D/g,"").replace(/\B(?=(\d{3})+(?!\d))/g,",");}
+document.getElementById("need").oninput=e=>addCommas(e.target);
+document.getElementById("guaranteed").oninput=e=>addCommas(e.target);
+
+function calcGap(){
+  const need=clean(document.getElementById("need").value);
+  const guar=clean(document.getElementById("guaranteed").value);
+  const swr=parseFloat(document.getElementById("swr").value);
+
+  if(isNaN(need)||isNaN(guar)||isNaN(swr)){alert("Enter valid numbers.");return;}
+
+  const gap=Math.max(0,need-guar);
+  const portfolio=gap/(swr/100);
+
+  document.getElementById("gap").textContent=fmt(gap);
+  document.getElementById("portfolio").textContent=fmt(portfolio);
+  document.getElementById("result").style.display="block";
+}
+</script>
+</body>
+</html>
