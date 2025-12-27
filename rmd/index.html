@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RMD Calculator - LifeAfterAge50</title>
+</head>
+<body style="background:#f5f7f7;margin:0;padding:1rem;">
+<div id="rmd-box" style="font-family:sans-serif;max-width:600px;margin:auto;padding:1rem;border-radius:12px;background:#e5f3f1;border:1px solid #ccc;">
+  <h2 style="color:#1c8c7d;margin-top:0;">RMD Calculator</h2>
+  <p>Estimate your Required Minimum Distribution (RMD).</p>
+  <label>Age this year:<br><input type="number" id="rmd-age" min="73" max="101" placeholder="e.g., 73" style="width:100%;padding:0.5rem;margin:0.5rem 0;"></label>
+  <label>Account balance (Dec 31 last year):<br><input type="text" id="rmd-balance" placeholder="e.g., 500,000" style="width:100%;padding:0.5rem;margin:0.5rem 0;"></label>
+  <button onclick="calcRMD()" style="background:#1c8c7d;color:#fff;padding:0.6rem 1.2rem;border:none;border-radius:6px;cursor:pointer;">Calculate</button>
+  <div id="rmd-result" style="margin-top:1rem;display:none;">
+    <h3 style="color:#1c8c7d;">Estimated RMD</h3>
+    <p id="rmd-output" style="font-size:1.2rem;font-weight:bold;"></p>
+    <p id="rmd-factor" style="color:#555;"></p>
+  </div>
+  <p style="font-size:0.8rem;color:#777;margin-top:0.75rem;">For educational purposes only. Not tax or investment advice.</p>
+</div>
+<script>
+const factors={73:26.5,74:25.5,75:24.6,76:23.7,77:22.9,78:22.0,79:21.1,80:20.2,81:19.4,82:18.5,83:17.7,84:16.8,85:16.0,86:15.2,87:14.4,88:13.7,89:12.9,90:12.2,91:11.5,92:10.8,93:10.1,94:9.5,95:8.9,96:8.4,97:7.8,98:7.3,99:6.8,100:6.4,101:6.0};
+function format(n){return n.toLocaleString("en-US",{style:"currency",currency:"USD"});}
+function clean(v){return parseFloat(v.replace(/,/g,""));}
+document.getElementById("rmd-balance").addEventListener("input",e=>{e.target.value=e.target.value.replace(/\D/g,"").replace(/\B(?=(\d{3})+(?!\d))/g,",");});
+function calcRMD(){
+  const age=parseInt(document.getElementById("rmd-age").value),bal=clean(document.getElementById("rmd-balance").value),f=factors[age];
+  if(!f||isNaN(bal)||bal<=0){alert("Enter valid age and balance.");return;}
+  const rmd=bal/f;
+  document.getElementById("rmd-output").textContent=format(rmd);
+  document.getElementById("rmd-factor").textContent="Life expectancy factor: "+f;
+  document.getElementById("rmd-result").style.display="block";
+}
+</script>
+</body>
+</html>
