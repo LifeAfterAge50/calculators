@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Social Security Benefit Estimator - LifeAfterAge50</title>
+</head>
+<body style="background:#f5f7f7;margin:0;padding:1rem;">
+<div style="font-family:sans-serif;max-width:650px;margin:auto;padding:1rem;border-radius:12px;background:#e5f3f1;border:1px solid #ccc;">
+  <h2 style="color:#1c8c7d;margin-top:0;">Social Security Benefit Estimator</h2>
+  <p>Estimate your monthly benefit based on claiming age.</p>
+
+  <label>Your FRA monthly benefit:<br>
+    <input type="text" id="fra" placeholder="e.g., 2,000" style="width:100%;padding:0.5rem;margin:0.5rem 0;">
+  </label>
+
+  <label>Your claiming age (62–70):<br>
+    <input type="number" id="age" min="62" max="70" placeholder="e.g., 67" style="width:100%;padding:0.5rem;margin:0.5rem 0;">
+  </label>
+
+  <button onclick="calcSS()" style="background:#1c8c7d;color:#fff;padding:0.6rem 1.2rem;border:none;border-radius:6px;cursor:pointer;">Calculate</button>
+
+  <div id="result" style="margin-top:1rem;display:none;">
+    <h3 style="color:#1c8c7d;">Results</h3>
+    <p><strong>Monthly benefit:</strong> <span id="benefit"></span></p>
+    <p><strong>Change vs FRA:</strong> <span id="change"></span></p>
+    <p><strong>Annual benefit:</strong> <span id="annual"></span></p>
+    <p style="font-size:0.8rem;color:#777;margin-top:0.75rem;">Educational only. Not SSA advice.</p>
+  </div>
+</div>
+
+<script>
+function fmt(n){return n.toLocaleString("en-US",{style:"currency",currency:"USD"});}
+function clean(v){return parseFloat(v.replace(/,/g,""));}
+document.getElementById("fra").oninput=e=>e.target.value=e.target.value.replace(/\D/g,"").replace(/\B(?=(\d{3})+(?!\d))/g,",");
+
+function adjFactor(age){
+  const fra=67;
+  if(age<fra){
+    let m=(fra-age)*12;
+    return 1-(m*0.005); // 0.5% reduction per month early
+  }
+  if(age>fra){
+    let m=(age-fra)*12;
+    return 1+(m*0.00667); // 8% per year delay
+  }
+  return 1;
+}
+
+function calcSS(){
+  const fra=clean(document.getElementById("fra").value);
+  const age=parseFloat(document.getElementById("age").value);
+  if(isNaN(fra)||isNaN(age)||age<62||age>70){alert("Enter valid numbers.");return;}
+
+  const factor=adjFactor(age);
+  const benefit=fra*factor;
+  const diff=((factor-1)*100).toFixed(1);
+  const annual=benefit*12;
+
+  document.getElementById("benefit").textContent=fmt(benefit);
+  document.getElementById("change").textContent=(diff>0?"+":"")+diff+"%";
+  document.getElementById("annual").textContent=fmt(annual);
+  document.getElementById("result").style.display="block";
+}
+</script>
+</body>
+</html>
