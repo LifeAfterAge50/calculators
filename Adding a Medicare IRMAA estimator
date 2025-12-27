@@ -65,4 +65,36 @@ function calcIRMAA(){
 }
 </script>
 </body>
+<script>
+function fmt(n){return n.toLocaleString("en-US",{style:"currency",currency:"USD"});}
+function clean(v){return parseFloat(v.replace(/,/g,""));}
+document.getElementById("magi").oninput=e=>e.target.value=e.target.value.replace(/\D/g,"").replace(/\B(?=(\d{3})+(?!\d))/g,",");
+
+function bracket(m,s){
+  const bS=[0,103000,129000,161000,193000,500000];
+  const bJ=[0,206000,258000,322000,386000,750000];
+  const idx=(s==="single"?bS:bJ).findIndex((v,i,a)=>m>=v&&m<(a[i+1]||1e12));
+  return idx;
+}
+
+function calcIRMAA(){
+  const m=clean(document.getElementById("magi").value);
+  const s=document.getElementById("status").value;
+  if(isNaN(m)){alert("Enter valid income.");return;}
+
+  const idx=bracket(m,s);
+
+  const b=[0,69.90,174.70,279.50,384.30,419.30];
+  const d=[0,12.90,33.30,53.80,74.20,81.00];
+
+  const bAmt=b[idx], dAmt=d[idx];
+  const total=bAmt+dAmt, annual=total*12;
+
+  document.getElementById("b-out").textContent=fmt(bAmt);
+  document.getElementById("d-out").textContent=fmt(dAmt);
+  document.getElementById("total").textContent=fmt(total);
+  document.getElementById("annual").textContent=fmt(annual);
+  document.getElementById("result").style.display="block";
+}
+</script>
 </html>
